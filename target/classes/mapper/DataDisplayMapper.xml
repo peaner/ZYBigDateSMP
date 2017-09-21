@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+
+<mapper namespace="cn.springmvc.dao.DataDisplayDAO" >
+
+  <!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 -->
+  <!-- <cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"></cache> -->
+     
+
+  <resultMap id="DataDisplayResultMap" type="cn.springmvc.model.DataDisplay" >
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="displayName" property="displayName" jdbcType="VARCHAR" />
+    <result column="displaySorce" property="displaySorce" jdbcType="VARCHAR" />
+    <result column="runType" property="runType" jdbcType="VARCHAR" />
+    <result column="displayPreview" property="displayPreview" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="updateUser" property="updateUser" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+   
+  <!-- 查询数据 -->
+  <select id="queryDataDisplay" parameterType="java.util.Map" resultMap="DataDisplayResultMap" >
+    select * from data_display where 1=1
+	<if test="displayName !=null and displayName !=''">
+		and displayName=#{displayName}
+	</if>
+	<if test="displaySorce !=null and displaySorce !=''">
+		and displaySorce=#{displaySorce}
+	</if>
+	<if test="id !=null and id !=''">
+		and id=#{id}
+	</if>
+  </select>
+  
+  <!-- 带分页的查询数据 -->
+  <select id="queryDataDisplayByPage" parameterType="java.util.Map" resultMap="DataDisplayResultMap">
+  	select * from data_display where 1=1
+  	<if test="displayName!=null and displayName !=''">
+  	   and displayName like CONCAT('%','${displayName}','%')
+  	</if>  	
+	<if test="displaySorce != null and displaySorce !=''">
+			and displaySorce like CONCAT('%','${displaySorce}','%' )  order by id 
+	</if>
+  	limit #{start},#{end}
+  </select>
+  
+  	<!-- 插入数据 -->
+	<insert id="insertDataDisplay" parameterType="cn.springmvc.model.DataDisplay">
+		insert into data_display(
+		displayName,
+		displaySorce,
+		runType,
+		displayPreview,
+		path,
+		remark,
+		updateUser,
+		updateTime)
+		values
+		(
+		#{displayName},
+		#{displaySorce},
+		#{runType},
+		#{displayPreview},
+		#{path},
+		#{remark},
+		#{updateUser},
+		#{updateTime})
+	</insert>
+	<!-- 更新数据 -->
+	<update id="editDataDisplay" parameterType="cn.springmvc.model.DataDisplay">
+		update data_display set
+		displayName=#{displayName}
+		,remark=#{remark}
+		<if test="displaySorce != null and displaySorce !=''">,displaySorce=#{displaySorce}</if>
+		<if test="runType != null and runType !=''">,runType=#{runType}</if>
+		<if test="displayPreview != null and displayPreview !=''">,displayPreview=#{displayPreview}</if>
+		<if test="path != null and path !=''">,path=#{path}</if>		
+		<if test="updateUser != null and updateUser !=''">,updateUser=#{updateUser}</if>
+		<if test="updateTime != null and updateTime !=''">,updateTime=#{updateTime}</if>
+ 		WHERE id=#{id}
+	</update>
+	<!-- 更新数据 -->
+	<update id="editDataDisplayRunType" parameterType="java.util.Map">
+		update data_display set
+		runType=#{runType}
+		,displayPreview=#{displayPreview}
+		<if test="updateUser != null and updateUser !=''">,updateUser=#{updateUser}</if>
+		<if test="updateTime != null and updateTime !=''">,updateTime=#{updateTime}</if>
+ 		WHERE id=#{id}
+	</update>
+	<!-- 删除数据 -->
+	<delete id="deleteDataDisplay" parameterType="cn.springmvc.model.DataDisplay">
+		delete from data_display
+		<where>
+			<if test="id != null and id !=''">
+				id=#{id}
+			</if>
+		</where>
+	</delete>
+</mapper>

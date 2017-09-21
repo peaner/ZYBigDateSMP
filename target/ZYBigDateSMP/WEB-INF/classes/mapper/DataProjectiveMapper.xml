@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.springmvc.dao.DataProjectiveDAO" >
+
+  <resultMap id="DataProjectiveResultMap" type="cn.springmvc.model.DataProjective" >
+    <result column="id" property="id" jdbcType="VARCHAR" />
+    <result column="displayName" property="displayName" jdbcType="VARCHAR" />
+    <result column="projectiveScreen" property="projectiveScreen" jdbcType="VARCHAR" />
+    <result column="runType" property="runType" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="updateUser" property="updateUser" jdbcType="VARCHAR" />
+    <result column="updateTime" property="updateTime" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <!-- 数据查询 -->
+  <select id="queryDataProjective" parameterType="java.util.Map" resultMap="DataProjectiveResultMap">
+    select * from data_projective
+    <where>
+      <if test="displayName != null and dispalyName !=''">
+        displayName=#{displayName}
+      </if>
+      <if test="projectiveScreen != null and projectiveScreen !=''">
+       and projectiveScreen=#{projectiveScreen}
+      </if>
+      <if test="id != null and id !=''">
+       and id=#{id}
+      </if>
+    </where>
+  </select>
+  
+  <!-- 带分页的查询数据 -->
+  <select id="queryDataProjectiveByPage" parameterType="java.util.Map" resultMap="DataProjectiveResultMap">
+    select * from data_projective where 1=1
+    <if test="displayName != null and displayName != ''">
+      and displayName like CONCAT('%','${displayName}','%')
+    </if>
+    <if test="projectiveScreen != null and projectiveScreen != ''">
+      and projectiveScreen like CONCAT('%','${projectiveScreen}','%')
+    </if>
+    limit #{start},#{end}
+  </select>
+  
+  	<!-- 插入数据 -->
+	<insert id="insertProjectiveData" parameterType="cn.springmvc.model.DataProjective">
+		insert into data_projective(
+		displayName,
+		projectiveScreen,
+		runType,
+		remark,
+		updateUser,
+		updateTime)
+		values
+		(
+		#{displayName},
+		#{projectiveScreen},
+		#{runType},
+		#{remark},
+		#{updateUser},
+		#{updateTime})
+	</insert>
+	
+	<!-- 更新数据 -->
+	<update id="editProjectiveData" parameterType="cn.springmvc.model.DataProjective">
+		update data_projective set
+		<if test="displayName != null and displayName !=''">displayName=#{displayName}</if>
+		<if test="projectiveScreen != null and projectiveScreen !=''">,projectiveScreen=#{projectiveScreen}</if>
+		<if test="runType != null and runType !=''">,runType=#{runType}</if>
+		,remark=#{remark}
+		<if test="updateUser != null and updateUser !=''">,updateUser=#{updateUser}</if>
+		<if test="updateTime != null and updateTime !=''">,updateTime=#{updateTime}</if>
+ 		WHERE id=#{id}
+	</update>
+		
+	<!-- 当修改了数据展示中的展示名称后，数据投放中的展示名称修改 -->
+	<update id="editProjectiveDataByDisplayName" parameterType="java.util.Map">
+		update data_projective set 
+		displayName=#{newDisplayName},
+		updateUser=#{updateUser},
+		updateTime=#{updateTime}
+		WHERE displayName=#{oldDisplayName}
+	</update>
+	
+	<!-- 当修改了数据展示中的展示屏幕后，数据投放中的展示屏幕修改 -->
+	<update id="editProjectiveDataByScreen" parameterType="java.util.Map">
+		update data_projective set 
+		projectiveScreen=#{newScreen},
+		updateUser=#{updateUser},
+		updateTime=#{updateTime}
+		WHERE projectiveScreen=#{oldScreen}
+	</update>
+	
+	<!-- 删除数据 -->
+	<delete id="deleteProjectiveData" parameterType="cn.springmvc.model.DataProjective">
+		delete from data_projective
+		<where>
+			<if test="id != null and id !=''">
+				id=#{id}
+			</if>
+		</where>
+	</delete>
+
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/2002/xmlspec/dtd/2.10/xmlspec.dtd">
+
+<!--数据表:其中必须配置的项目包括操作类型，数据库名称，字段名称以及字段长度，其他根据具体要求配置-->
+<dataTable>
+	<operateType>1</operateType>            			<!--数据表操作类型：[1:新增][2:修改][3:删除]-->
+	<tableName>data_collection_test01</tableName>			<!--数据库名称 -->
+	<column>
+		<userId>				    					<!--字段名称 -->			
+			<type>varchar</type>    					<!--字段类型 -->
+			<length>20</length>     					<!--字段长度 -->
+			<point></point>		    					<!--小数点长度：字段类型为数字类型时-->
+			<isNull>1</isNull>	    					<!--空白表示可为null，其他表示非null-->
+			<isAutoIncrement></isAutoIncrement>		    <!--空白表示非递增，其他表示递增-->
+			<isPrikey></isPrikey>  						<!--空白表示非主键，其他表示为主键 -->			
+		</userId>
+		<userName>
+			<type>varchar</type>    					<!--字段类型 -->
+			<length>40</length>     					<!--字段长度 -->
+			<point></point>		    					<!--小数点长度：字段类型为数字类型时-->
+			<isNull>1</isNull>	    					<!--空白表示可为null，其他表示非null-->
+			<isAutoIncrement></isAutoIncrement>		    <!--空白表示非递增，其他表示递增-->
+			<isPrikey></isPrikey>  						<!--空白表示非主键，其他表示为主键 -->		
+		</userName>
+		<totalMoney>
+			<type>double</type>    						<!--字段类型 -->
+			<length>20</length>     					<!--字段长度 -->
+			<point>5</point>		    				<!--小数点长度：字段类型为数字类型时-->
+			<isNull>1</isNull>	    					<!--空白表示可为null，其他表示非null-->
+			<isAutoIncrement></isAutoIncrement>		    <!--空白表示非递增，其他表示递增-->
+			<isPrikey></isPrikey>  						<!--空白表示非主键，其他表示为主键 -->	
+		</totalMoney>
+	</column>
+</dataTable>
+

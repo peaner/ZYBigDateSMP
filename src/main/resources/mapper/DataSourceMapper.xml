@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- namespace：必须与对应的接口全类名一致 id:必须与对应接口的某个对应的方法名一致 -->
+<mapper namespace="cn.springmvc.dao.DataManageDAO">
+
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 -->
+	<cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"></cache>
+
+
+	<!-- 返回对象map值 -->
+	<resultMap id="DataSourceResultMap" type="cn.springmvc.model.DataSource">
+		<result column="ID" property="id" jdbcType="VARCHAR" />
+		<result column="DATANAME" property="dataName" jdbcType="VARCHAR" />
+		<result column="COLLECTIONSORCE" property="collectionSorce" jdbcType="VARCHAR" />
+		<result column="RUNTYPE" property="runType" jdbcType="VARCHAR" />
+		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
+		<result column="path" property="path" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 查询数据 -->
+	<select id="queryDataSource" parameterType="java.util.Map" resultMap="DataSourceResultMap">
+		select * from data_source where 1=1  
+			<if test="dataName !=null and dataName !=''">
+				and dataName=#{dataName}
+			</if>
+			<if test="collectionSorce !=null and collectionSorce !=''">
+				and collectionSorce=#{collectionSorce}
+			</if>
+			<if test="id !=null and id !=''">
+				and id=#{id}
+			</if>		
+	</select>
+
+	<select id="queryDataSourceByPage" parameterType="java.util.Map" resultMap="DataSourceResultMap">
+		select * from data_source where 1=1  
+			<if test="dataNameSerch != null and dataNameSerch !=''">
+					and dataName like CONCAT('%','${dataNameSerch}','%' )  
+			</if>
+			<if test="collectionSorceSerch != null and collectionSorceSerch !=''">
+					and collectionSorce like CONCAT('%','${collectionSorceSerch}','%' )  order by id 
+			</if>
+		limit #{start},#{end}
+	</select>
+	
+	<!-- 生成数据库 -->
+	<update id="executeCreateTableSql" parameterType="java.util.Map" statementType="STATEMENT">
+        create table if not exists ${tableName}
+        <foreach collection="keys" item="k" index="index" open="(" separator="," close=");">
+            ${k}
+        </foreach>
+	</update>
+	
+	<!-- 插入数据 -->
+	<insert id="insertDataSource" parameterType="cn.springmvc.model.DataSource">
+		insert into data_source(
+		dataName,
+		collectionSorce,
+		runType,
+		remark,
+		path,
+		updateUser,
+		updateTime)
+		values
+		(
+		#{dataName},
+		#{collectionSorce},
+		#{runType},
+		#{remark},
+		#{path},
+		#{updateUser},
+		#{updateTime})
+	</insert>
+	
+	<!-- 删除数据 -->
+	<delete id="deleteDsInfo" parameterType="cn.springmvc.model.DataSource">
+		delete from data_source
+		<where>
+			<if test="id != null and id !=''">
+				id=#{id}
+			</if>
+		</where>
+	</delete>
+	
+	<!-- 更新数据 -->
+	<update id="editDsInfo" parameterType="cn.springmvc.model.DataSource">
+		update data_source set
+		<if test="dataName != null and dataName !=''">dataName=#{dataName}</if>
+		<if test="collectionSorce != null and collectionSorce !=''">,collectionSorce=#{collectionSorce}</if>
+		<if test="runType != null and runType !=''">,runType=#{runType}</if>
+		,remark=#{remark}
+		<if test="path != null and path !=''">,path=#{path}</if>
+		<if test="updateUser != null and updateUser !=''">,updateUser=#{updateUser}</if>
+		<if test="updateTime != null and updateTime !=''">,updateTime=#{updateTime}</if>
+ 		WHERE id=#{id}
+	</update>
+	<!-- 更新数据 -->
+	<update id="editDsMapInfo" parameterType="java.util.Map">
+		update data_source set
+		<if test="runType != null and runType !=''">runType=#{runType}</if>
+		<if test="updateUser != null and updateUser !=''">,updateUser=#{updateUser}</if>
+		<if test="updateTime != null and updateTime !=''">,updateTime=#{updateTime}</if>
+ 		WHERE id=#{id}
+	</update>
+</mapper>

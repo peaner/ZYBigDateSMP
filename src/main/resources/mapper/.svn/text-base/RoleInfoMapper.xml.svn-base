@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- namespace：必须与对应的接口全类名一致 id:必须与对应接口的某个对应的方法名一致 -->
+<mapper namespace="cn.springmvc.dao.RoleManageDAO">
+
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 -->
+	<!-- <cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"></cache> -->
+
+
+	<!-- 返回对象map值 -->
+	<resultMap id="RoleResultMap" type="cn.springmvc.model.RoleInfo">
+		<result column="ROLEID" property="roleId" jdbcType="VARCHAR" />
+		<result column="ROLENAME" property="roleName" jdbcType="VARCHAR" />
+		<result column="EXPLANATION" property="explanation" jdbcType="VARCHAR" />
+		<result column="PERMISSION" property="permission" jdbcType="VARCHAR" />
+		<result column="UPDATEDUSER" property="updatedUser" jdbcType="VARCHAR" />
+		<result column="UPDATEDTIME" property="updatedTime" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- 插入数据 -->
+	<insert id="insertRoleInfo" parameterType="cn.springmvc.model.RoleInfo">
+		insert into roleInfo(
+		ROLENAME,
+		EXPLANATION,
+		PERMISSION,
+		UPDATEDUSER,
+		UPDATEDTIME)
+		values
+		(
+		#{roleName},
+		#{explanation},
+		#{permission},
+		#{updatedUser},
+		#{updatedTime})
+	</insert>
+
+	<!-- 查询数据 -->
+	<select id="queryRoleInfo" parameterType="cn.springmvc.model.RoleInfo" resultMap="RoleResultMap">
+		select * from roleInfo
+		<where>
+			<if test="roleName !=null and roleName !=''">
+				roleName=#{roleName}
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryRoleInfoById" parameterType="cn.springmvc.model.RoleInfo" resultMap="RoleResultMap">
+		select * from roleInfo
+		<where>
+			<if test="roleId !=null and roleId !=''">
+				roleId=#{roleId}
+			</if>
+		</where>
+	</select>
+
+	<select id="queryRoleInfoByPage" parameterType="java.util.Map" resultMap="RoleResultMap">
+		select * from roleInfo where 1=1  
+			<if test="roleName != null and roleName !=''">
+					and roleName like CONCAT('%','${roleName}','%' )  
+			</if>
+		limit #{start},#{end}
+	</select>
+	
+	<!-- 删除数据 -->
+	<delete id="deleteRoleInfo" parameterType="cn.springmvc.model.RoleInfo">
+		delete from roleInfo
+		<where>
+			<if test="roleId != null and roleId !=''">
+				roleId=#{roleId}
+			</if>
+		</where>
+	</delete>
+	
+	<!-- 更新数据 -->
+	<update id="updateRoleInfo" parameterType="cn.springmvc.model.RoleInfo">
+		update roleInfo set
+		ROLENAME=#{roleName}
+		<if test="explanation != null and explanation !=''">,EXPLANATION=#{explanation}</if>
+		,PERMISSION=#{permission}
+		<if test="updatedUser != null and updatedUser !=''">,UPDATEDUSER=#{updatedUser}</if>
+		<if test="updatedTime != null and updatedTime !=''">,UPDATEDTIME=#{updatedTime}</if>
+ 		WHERE ROLEID=#{roleId}
+	</update>
+</mapper>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- namespace：必须与对应的接口全类名一致 id:必须与对应接口的某个对应的方法名一致 -->
+<mapper namespace="cn.springmvc.dao.UserManageDAO">
+
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 -->
+	<!-- <cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"></cache> -->
+
+
+	<!-- 返回对象map值 -->
+	<resultMap id="UserInfoResultMap" type="cn.springmvc.model.UserInfo">
+		<result column="USERID" property="userId" jdbcType="VARCHAR" />
+		<result column="USERNAME" property="userName" jdbcType="VARCHAR" />
+		<result column="NAME" property="name" jdbcType="VARCHAR" />
+		<result column="PASSWORD" property="passWord" jdbcType="VARCHAR" />
+		<result column="STATUS" property="status" jdbcType="VARCHAR" />
+		<result column="TELNO" property="telNo" jdbcType="VARCHAR" />
+		<result column="EMAIL" property="email" jdbcType="VARCHAR" />
+		<result column="ROLE" property="role" jdbcType="VARCHAR" />
+		<result column="UPDATEDUSER" property="updatedUser" jdbcType="VARCHAR"/>
+		<result column="UPDATEDTIME" property="updatedTime" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<!-- 插入数据 -->
+	<insert id="insertUserInfo" parameterType="cn.springmvc.model.UserInfo">
+		insert into userInfo(
+		USERNAME,
+		PASSWORD,
+		NAME,
+		STATUS,
+		TELNO,
+		EMAIL,
+		ROLE,
+		UPDATEDUSER,
+		UPDATEDTIME)
+		values
+		(
+		#{userName},
+		#{passWord},
+		#{name},
+		#{status},
+		#{telNo},
+		#{email},
+		#{role},
+		#{updatedUser},
+		#{updatedTime})
+	</insert>
+
+	<!-- 查询数据 -->
+	<select id="queryUserInfo" parameterType="cn.springmvc.model.UserInfo" resultMap="UserInfoResultMap">
+		select * from userInfo
+		<where>
+			<if test="userName != null and userName !=''">
+				userName=#{userName}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询数据 -->
+	<select id="queryUserInfoByRoleName" parameterType="cn.springmvc.model.UserInfo" resultMap="UserInfoResultMap">
+		select * from userInfo where 1=1 and role like CONCAT('%','${role}','%' )
+	</select>
+	
+	<!-- 查询数据 -->
+	<select id="queryUserInfoById" parameterType="cn.springmvc.model.UserInfo" resultMap="UserInfoResultMap">
+		select * from userInfo
+		<where>
+			<if test="userId !=null and userId !=''">
+				userId=#{userId}
+			</if>
+		</where>
+	</select>
+
+	<select id="queryUserInfoByPage" parameterType="java.util.Map" resultMap="UserInfoResultMap">
+		select * from userInfo where 1=1  
+			<if test="userName!=null and userName !=''">
+					and userName like CONCAT('%','${userName}','%' )  
+			</if>
+		limit #{start},#{end}
+	</select>
+	
+	<!-- 删除数据 -->
+	<delete id="deleteUserInfo" parameterType="java.util.Map">
+		delete from userInfo where userId=#{userId}
+	</delete>
+	
+	<!-- 更新数据 -->
+	<update id="updateUserInfo" parameterType="cn.springmvc.model.UserInfo">
+	  	update userInfo set
+	  		USERNAME=#{userName}
+		   ,PASSWORD=#{passWord}
+		   ,NAME=#{name}
+		   ,STATUS=#{status}
+		   ,TELNO=#{telNo}
+		   ,EMAIL=#{email}
+		   ,ROLE=#{role}
+		   ,UPDATEDUSER=#{updatedUser}
+		   ,UPDATEDTIME=#{updatedTime}
+		   
+		   <!-- <if test="userName != null and userName !=''">USERNAME=#{userName}</if>
+		   <if test="passWord != null and passWord !=''">,PASSWORD=#{passWord}</if>
+		   <if test="status != null and status !=''">,STATUS=#{status}</if>
+		   <if test="telNo != null and telNo !=''">,TELNO=#{telNo}</if>
+		   <if test="email != null and email !=''">,EMAIL=#{email}</if>
+		   <if test="role != null and role !=''">,ROLE=#{role}</if>
+		   <if test="updatedUser != null and updatedUser !=''">,UPDATEDUSER=#{updatedUser}</if>
+		   <if test="updatedTime != null and updatedTime !=''">,UPDATEDTIME=#{updatedTime}</if> -->
+		   where 
+		   USERID=#{userId}
+	</update>	
+</mapper>

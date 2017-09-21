@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- namespace：必须与对应的接口全类名一致 id:必须与对应接口的某个对应的方法名一致 -->
+<mapper namespace="cn.springmvc.dao.ComputerManageDAO">
+
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 -->
+	<!-- <cache size="1024" flushInterval="60000" eviction="LRU" readOnly="false"></cache> -->
+
+
+	<!-- 返回对象map值 -->
+	<resultMap id="ComputerInfoResultMap" type="cn.springmvc.model.ComputerInfo">
+		<result column="COMPUTERID" property="computerId" jdbcType="VARCHAR" />
+		<result column="COMPUTERNAME" property="computerName" jdbcType="VARCHAR" />
+		<result column="COMPUTERIP" property="computerIp" jdbcType="VARCHAR" />
+		<result column="UPDATEDUSER" property="updatedUser" jdbcType="VARCHAR"/>
+		<result column="UPDATEDTIME" property="updatedTime" jdbcType="VARCHAR"/>
+	</resultMap>
+
+	<!-- 插入数据 -->
+	<insert id="insertComputerInfo" parameterType="cn.springmvc.model.ComputerInfo">
+		insert into computerInfo(
+		COMPUTERID,
+		COMPUTERNAME,
+		COMPUTERIP,
+		UPDATEDUSER,
+		UPDATEDTIME)
+		values
+		(
+		#{computerId},
+		#{computerName},
+		#{computerIp},
+		#{updatedUser},
+		#{updatedTime})
+	</insert>
+
+	<!-- 查询数据 -->
+	<select id="queryComputerInfo" parameterType="cn.springmvc.model.ComputerInfo" resultMap="ComputerInfoResultMap">
+		select * from computerInfo
+		<where>
+			<if test="computerName!=null and computerName !=''">
+				computerName=#{computerName}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询数据 -->
+	<select id="queryComputerInfoById" parameterType="cn.springmvc.model.ComputerInfo" resultMap="ComputerInfoResultMap">
+		select * from computerInfo where 1=1
+			<if test="computerId !=null and computerId !=''">
+				and computerId=#{computerId}
+			</if>
+			<if test="computerIp !=null and computerIp !=''">
+				and computerIp=#{computerIp}
+			</if>
+	</select>
+
+	<select id="queryComputerInfoByPage" parameterType="java.util.Map" resultMap="ComputerInfoResultMap">
+		select * from computerInfo where 1=1  
+			<if test="computerName!=null and computerName !=''">
+					and computerName like CONCAT('%','${computerName}','%' )  
+			</if>
+		limit #{start},#{end}
+	</select>
+	
+	<!-- 删除数据 -->
+	<delete id="deleteComputerInfo" parameterType="cn.springmvc.model.ComputerInfo">
+		delete from computerInfo
+		<where>
+			<if test="computerId !=null and computerId !=''">
+				computerId=#{computerId}
+			</if>
+		</where>
+	</delete>
+	
+	<!-- 更新数据 -->
+	<update id="updateComputerInfo" parameterType="cn.springmvc.model.ComputerInfo">
+	  	update computerInfo set
+			<if test="computerName!=null and computerName !=''">COMPUTERNAME=#{computerName}</if>
+			<if test="computerIp!=null and computerIp !=''">,COMPUTERIP=#{computerIp}</if>
+			<if test="updatedUser!=null and updatedUser !=''">,UPDATEDUSER=#{updatedUser}</if>
+			<if test="updatedTime!=null and updatedTime !=''">,UPDATEDTIME=#{updatedTime}</if>
+		   where 
+		   COMPUTERID=#{computerId}
+	</update>	
+</mapper>
